@@ -3,9 +3,11 @@ const mysql = require("mysql");
 function connect() {
     var con = mysql.createConnection({
         host: "localhost",
-        user: "aman",
+        user: "root",
         password: "aman1234",
-        database:"credentials"
+        database:"credentials",
+        authPlugin: 'mysql_native_password',
+
     });
 
     con.connect((err) => {

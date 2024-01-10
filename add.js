@@ -31,10 +31,10 @@ async function getUser(username) {
       const query = util.promisify(connection.query).bind(connection);
       const quer = `SELECT * FROM passwords WHERE username = "${username}"`;
       const result = await query(quer);
-
+      console.log(result)
       if (result.length > 0) {
-          const user = { username: result[0].username, password: result[0].passwords };
-          console.log(user);
+          const user = await  { username: result[0].username, password: result[0].password };
+          await console.log(user);
           return user;
       } else {
           return null; // Return null if no user is found

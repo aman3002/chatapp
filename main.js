@@ -1,12 +1,11 @@
 const socket = io("http://localhost:8001",{transports:["websocket"]});
-
 const form=document.getElementById("send");
 const messageinp=document.getElementById("input");
 const messages=document.querySelector(".container");
+const typingIndicator = document.getElementById("typing-indicator");
 console.log(messages)
 socket.emit("new-user", (error) => {
     if (error) {
-
       console.error("Error while emitting 'new-user' event:", error);
     } else {
       console.log("Successfully emitted 'new-user' event.");
@@ -14,6 +13,15 @@ socket.emit("new-user", (error) => {
   });
   console.log("name");
 var audio=new Audio("sound.mp3")
+messageinp.addEventListener('input', () => {
+  console.log("input ")
+  if (messageinp.value.length > 0) {
+    socket.emit('typing');
+  } else {
+    socket.emit('stop-typing');
+  }
+});
+
 function appends(message,position){
     const messageelement=document.createElement("div");
     messageelement.innerText=message;
@@ -60,3 +68,23 @@ socket.on("userjoined",(data)=>{
 socket.on("dist",data=>{
     appends(`${data} left the chat`, "right")
 })
+socket.on('opponent-typing', (opponentUsername) => {
+  console.log(`${opponentUsername} is typing...`);
+  const typingIndicator = document.getElementById('typing-indicator');
+  typingIndicator.textContent = `${opponentUsername} is typing...`;
+});
+socket.on('opponent-stop-typing', (opponentUsername) => {
+  console.log(`${opponentUsername} stopped typing.`);
+  const typingIndicator = document.getElementById('typing-indicator');
+  typingIndicator.textContent = '';
+});
+socket.on('update-online-users', (onlineUsers) => {
+  const typingIndicator = document.getElementById('typing-indicator2');
+  typingIndicator.textContent = onlineUsers;
+  console.log('Online Users:', onlineUsers);
+});
+socket.on('remove-online-users', (onlineUsers) => {
+  const typingIndicator = document.getElementById('typing-indicator2');
+  typingIndicator.textContent = onlineUsers;
+  console.log('Online Users:', onlineUsers);
+});
